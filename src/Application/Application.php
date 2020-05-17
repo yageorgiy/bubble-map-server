@@ -1,13 +1,8 @@
 <?php
 namespace GraphQL\Application;
 
-use GraphQL\Application\Bearer;
 use ErrorException;
 use Exception;
-use GraphQL\Application\AppContext;
-use GraphQL\Application\ConfigManager;
-use GraphQL\Application\Entity\User;
-use \GraphQL\Application\Types;
 use \GraphQL\Application\Database\DataSource;
 use GraphQL\Server\RequestError;
 use \GraphQL\Type\Schema;
@@ -24,6 +19,7 @@ class Application
 
     /**
      * Инициализация запроса
+     * @throws \Throwable
      */
     public function __construct(){
         $this->applicationHeaders = $this->getRequestHeaders();
@@ -134,6 +130,16 @@ class Application
                 FormattedError::createFromException($error, $this->debug)
             ];
         }
+
+        Log::info("Mount accessed by ".$this->getClientIP().": "
+            .$httpStatus.","
+            .( isset($output['errors']) ? "errors" : "no-errors" ).","
+            .( isset($output['data']) ? "data" : "no-data" ).","
+            .( count($_FILES) > 0 ? "files" : "no-files" ).","
+
+            . "\nQuery:".( $data["query"] ?? "null")
+            . "\nVariables:".( $data["variables"] ?? "null")
+        );
 
         $this->sendJSON($output, $httpStatus);
     }

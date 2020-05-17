@@ -3,25 +3,24 @@ namespace GraphQL\Application\Entity;
 
 use GraphQL\Application\Database\DataSource;
 use GraphQL\Server\RequestError;
-use GraphQL\Utils\Utils;
 
 /**
  * Class User
- * Сущность пользователя.
- * (публичные GraphQL-методы см. в /src/graphql/Application/Type/UserType.php)
- * (поля объекта соответствуют полям таблицы, за которой прикреплена сущность - см. метод __getTable())
+ * Сущность пользователя
  *
  * @package GraphQL\Application\Data
  */
 
 class User extends EntityBase
 {
-    public string $password;
-    public string $surname;
+    public string $ip;
+    public string $date_registered;
+    public string $username;
     public string $sex;
     public string $email;
-    public string $date_registered;
-    public string $ip;
+    public string $status_email;
+    public string $verification_key_email;
+    public string $password;
 
     //TODO: заносить данные в сущность через __construct
 	public function __construct(array $data = null)

@@ -1,21 +1,16 @@
 <?php
 namespace GraphQL\Application\Type;
 
-use GraphQL\Application\Application;
+
 use GraphQL\Application\Bearer;
 use GraphQL\Application\AppContext;
 use GraphQL\Application\Database\DataSource;
 use GraphQL\Application\Entity\User;
 use GraphQL\Application\Entity\UserToken;
-use GraphQL\Application\File\CSVFileHandler;
-use GraphQL\Application\File\FileStorage;
 use GraphQL\Application\Types;
 use GraphQL\Server\RequestError;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
-use GraphQL\Type\Definition\Type;
-use GraphQL\Upload\UploadType;
-use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Class QueryType
@@ -82,11 +77,14 @@ class MutationType extends ObjectType
 
 
         $instance = new User([
+            'ip' => $context->ip,
+            'date_registered' => DataSource::timeInMYSQLFormat(),
             'username' => $args['username'],
-            'email' => $args['email'],
-            'password' => User::hashPassword($args['password']),
             'sex' => $args['sex'],
-            'date_registered' => DataSource::timeInMYSQLFormat()
+            'email' => $args['email'],
+            'status_email' => "ожидание",
+            'verification_key_email' => "",
+            'password' => User::hashPassword($args['password']),
         ]);
 
         return DataSource::insert($instance);
@@ -103,13 +101,13 @@ class MutationType extends ObjectType
      */
     public function login($rootValue, $args, AppContext $context){
 
-        //TODO: проверка на уникальность пользователя(?) (ФИО, e-mail, phone_number)
+        //TODO: проверка на уникальность пользователя(?) (ФИО, e-mail)
         //TODO: капча(?)
         //TODO: анти-DDOS авторизации
         //TODO: защита от распространенных атак
         //TODO: привязывать ли сессию к IP-адресу?
 
-        $found = DataSource::findOne("user", "email = :username OR phone_number = :username OR login = :username", [
+        $found = DataSource::findOne("user", "email = :username OR username = :username", [
             ':username' => $args['username']
         ]);
 
