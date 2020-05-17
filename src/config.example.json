@@ -1,0 +1,9 @@
+{
+  "db_type": "mysql",
+  "db_name": "bubblemap",
+  "db_host": "localhost",
+  "db_user": "root",
+  "db_pass": "",
+
+  "debug": true
+}
