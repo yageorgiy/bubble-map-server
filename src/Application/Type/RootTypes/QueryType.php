@@ -26,6 +26,24 @@ class QueryType extends ObjectType
             'fields' => [
                 'viewer' => [
                     'type' => Types::user()
+                ],
+                'mapNodes' => [
+                    'args' => [
+                        "count" => Types::int()
+                    ],
+                    'type' => Types::listOf(Types::mapNode())
+                ],
+                'mapNode' => [
+                    'args' => [
+                        'id' => Types::nonNull(Types::int())
+                    ],
+                    'type' => Types::mapNode()
+                ],
+                'user' => [
+                    'args' => [
+                        'id' => Types::nonNull(Types::int())
+                    ],
+                    'type' => Types::user()
                 ]
             ],
             'resolveField' => function($val, $args, $context, ResolveInfo $info) {
@@ -51,6 +69,39 @@ class QueryType extends ObjectType
 	public function user($rootValue, $args, AppContext $context)
     {
         return DataSource::find('User', $args['id']);
+    }
+
+    /**
+     * Поиск поста на карте
+     *
+     * @param $rootValue
+     * @param $args
+     * @return mixed
+     */
+    public function mapNode($rootValue, $args, AppContext $context)
+    {
+        return DataSource::find('MapNode', $args['id']);
+    }
+
+    /**
+     * Генерация
+     *
+     * @param $rootValue
+     * @param $args
+     * @return mixed
+     */
+    public function mapNodes($rootValue, $args, AppContext $context)
+    {
+        $count = $args['count'] ?? 10;
+        $count = (int)$count;
+        if($count > 30) $count = 30;
+        if($count < 3) $count = 3;
+
+
+        // TODO оптимизация https://ruhighload.com/%D0%9E%D0%BF%D1%82%D0%B8%D0%BC%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F+order+by+rand%28%29
+        return DataSource::findAll('MapNode', "1 ORDER BY rand() LIMIT :count", [
+            "count" => $count
+        ]);
     }
 
     /**

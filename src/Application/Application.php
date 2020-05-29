@@ -9,6 +9,7 @@ use \GraphQL\Type\Schema;
 use \GraphQL\GraphQL;
 use \GraphQL\Error\FormattedError;
 use \GraphQL\Error\Debug;
+use GraphQL\Application\Log;
 
 class Application
 {
@@ -133,12 +134,13 @@ class Application
 
         Log::info("Mount accessed by ".$this->getClientIP().": "
             .$httpStatus.","
-            .( isset($output['errors']) ? "errors" : "no-errors" ).","
-            .( isset($output['data']) ? "data" : "no-data" ).","
+            .( isset($output['errors']) ? "output-errors" : "no-output-errors" ).","
+            .( isset($output['data']) ? "output-data" : "no-output-data" ).","
             .( count($_FILES) > 0 ? "files" : "no-files" ).","
 
-            . "\nQuery:".( $data["query"] ?? "null")
-            . "\nVariables:".( $data["variables"] ?? "null")
+            . "\nQuery:".( str_replace("\n", "", print_r($data["query"] ?? "null", true))) // 500 internal?
+            . "\nVariables:".( str_replace("\n", "", print_r($data["variables"] ?? "null", true))) // 500 internal?
+            . "\nErrors:".( print_r($output['errors'] ?? "null?", true)) // 500 internal?
         );
 
         $this->sendJSON($output, $httpStatus);
@@ -177,7 +179,7 @@ class Application
         // Объявление контекста
         $appContext = new AppContext();
         $appContext->viewer = $current_user;
-        $appContext->rootUrl = 'http://localhost:8085'; //TODO: изменить rootUrl
+        $appContext->rootUrl = 'http://192.168.1.129:9080/'; //TODO: изменить rootUrl
         $appContext->request = $_REQUEST;
         $appContext->app = $this;
         $appContext->ip = $this->getClientIP();

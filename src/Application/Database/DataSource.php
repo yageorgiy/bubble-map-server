@@ -40,7 +40,8 @@ class DataSource
 			$db_pass = ConfigManager::getField("db_pass");
 			try {
 				self::$pdo = new PDO("{$db_type}:dbname={$db_name};host={$db_host};charset=utf8", $db_user, $db_pass,[
-					PDO::ATTR_PERSISTENT => true
+					PDO::ATTR_PERSISTENT => true,
+                    PDO::ATTR_EMULATE_PREPARES => false
 				]);
 			} catch (PDOException $e) {
 				throw new Error("Не могу соединиться с базой данных.");
@@ -194,7 +195,7 @@ class DataSource
             throw new Error("Не удалось совершить запрос (".$str."): ".$arr);
         }
 
-        return true;
+        return self::getPDO()->lastInsertId('id');
     }
 
 

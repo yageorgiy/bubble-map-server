@@ -2,13 +2,16 @@
 namespace GraphQL\Application;
 
 use GraphQL\Application\Type\AdminMutationType;
+use GraphQL\Application\Type\MapNodeType;
 use GraphQL\Application\Type\MutationType;
 use GraphQL\Application\Type\NodeType;
 use GraphQL\Application\Type\QueryType;
 use GraphQL\Application\Type\Scalar\DateType;
 use GraphQL\Application\Type\Scalar\EmailType;
+use GraphQL\Application\Type\Scalar\HtmlType;
 use GraphQL\Application\Type\Scalar\PasswordType;
 use GraphQL\Application\Type\Scalar\PhoneNumberType;
+use GraphQL\Application\Type\Scalar\PostTagType;
 use GraphQL\Application\Type\Scalar\SexType;
 use GraphQL\Application\Type\Scalar\UrlType;
 use GraphQL\Application\Type\UserType;
@@ -16,6 +19,7 @@ use GraphQL\Type\Definition\CustomScalarType;
 use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\Type;
+use GraphQL\Upload\UploadType;
 
 /**
  * Class Types
@@ -27,6 +31,7 @@ class Types
 {
 	/* Типы данных сущностей */
     private static $user;
+    private static $mapNode;
 
 
     /**
@@ -37,6 +42,16 @@ class Types
     public static function user()
     {
         return self::$user ?: (self::$user = new UserType());
+    }
+
+    /**
+     * Посты на карте
+     *
+     * @return MapNodeType
+     */
+    public static function mapNode()
+    {
+        return self::$mapNode ?: (self::$mapNode = new MapNodeType());
     }
 
 
@@ -96,6 +111,9 @@ class Types
     private static $dateType;
     private static $passwordType;
     private static $sexType;
+    private static $postTagType;
+    private static $htmlType;
+    private static $uploadType;
 
 	/**
 	 * Тип e-mail
@@ -145,6 +163,36 @@ class Types
     public static function sex()
     {
         return self::$sexType ?: (self::$sexType = new SexType());
+    }
+
+    /**
+     * Тип тега поста
+     *
+     * @return PostTagType
+     */
+    public static function postTag()
+    {
+        return self::$postTagType ?: (self::$postTagType = new PostTagType());
+    }
+
+    /**
+     * Тип HTML
+     *
+     * @return HtmlType
+     */
+    public static function html()
+    {
+        return self::$htmlType ?: (self::$htmlType = new HtmlType());
+    }
+
+    /**
+     * Тип файла
+     *
+     * @return UploadType
+     */
+    public static function upload()
+    {
+        return self::$uploadType ?: (self::$uploadType = new UploadType());
     }
 
 
